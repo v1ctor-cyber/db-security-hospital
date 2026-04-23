@@ -2,7 +2,8 @@
 
 Sistema hospitalar com foco em segurança de dados sensíveis.
 
-```erDiagram
+```mermaid
+erDiagram
   PACIENTE ||--o{ CONSULTA : "realiza"
   MEDICO ||--o{ CONSULTA : "atende"
   PACIENTE ||--|| PRONTUARIO : "recebe"

@@ -1,0 +1,95 @@
+```dbml
+table paciente {
+  id_paciente int [pk, unique, increment]
+  nome varchar [not null]
+  cpf char(11) [unique, not null]
+  data_nascimento date [not null]
+  sexo char(1) [not null]
+  telefone varchar(20)
+  endereco varchar
+  email varchar 
+}
+
+table medico {
+  id_medico int [pk, unique, increment]
+  crm char(9) [unique, not null]
+  nome varchar [not null]
+  telefone varchar(20)
+  especialidade varchar [not null]
+}
+
+ table consulta {
+  id_consulta int [pk, unique, increment]
+  id_paciente int [ref: > paciente.id_paciente]
+  id_medico int [ref: > medico.id_medico]
+  data_hora timestamp [not null]
+  status varchar [not null]
+ }
+
+table prontuario{
+  id_prontuario int [pk ,unique, increment]
+  id_paciente int [ref: > paciente.id_paciente]
+  diagnostico varchar
+  alergias varchar
+  medicamento_continuo varchar
+  ultima_atualizacao timestamp [not null]
+
+}
+
+table prescricao {
+  id_prescricao int [pk, unique, increment]
+  id_consulta int [ref: > consulta.id_consulta]
+  id_remedio int [ref: > medicacao.id_medicacao]
+  duracao_dias int [not null]
+  dosagem varchar (6) [not null]
+  frequencia varchar [not null]
+}
+
+table medicacao {
+  id_medicacao int [pk, unique, increment]
+  nome varchar [not null]
+  fabricante varchar
+  principio_ativo varchar [not null]
+}
+
+table exame {
+  id_exame int [pk, unique, increment]
+  id_consulta int [ref: > consulta.id_consulta]
+  data_hora timestamp [not null]
+  tipo varchar
+}
+
+Table internacao {
+  id_internacao int [pk, unique, increment]
+  id_paciente int [ref: > paciente.id_paciente]
+  motivo varchar [not null]
+  id_leito int [ref: > leito.id_leito]
+  data_hora timestamp [not null]
+  data_saida date
+
+}
+
+table leito {
+  id_leito int [pk, unique, increment]
+  numero varchar [not null]
+  status varchar [not null]
+}
+
+table usuario_sistema{
+  id_usuario int [pk,increment, unique]
+  id_medico int [ref: > medico.id_medico]
+  login varchar [not null]
+  senha_hash varchar [not null]
+  perfil varchar [not null]
+  ultimo_acesso timestamp [not null]
+}
+
+table log_acesso {
+  id_log int [pk, unique, increment]
+  id_usuario int [ref: > usuario_sistema.id_usuario]
+  operacao varchar [not null]
+  tabela_acessada varchar [not null]
+  data_hora timestamp [not null]
+  ip_origem varchar [not null]
+}
+```

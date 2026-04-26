@@ -12,7 +12,7 @@ def get_conn():
         host="localhost",
         database="hospital_security",
         user="postgres",
-        password="victor1710"
+        password=""
     )
 
 def registrar_log(id_usuario, operacao, tabela, ip):

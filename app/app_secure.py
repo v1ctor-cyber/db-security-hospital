@@ -1,19 +1,22 @@
 # app_secure.py
 # Versão segura — mitiga SQL Injection com queries parametrizadas
 
+import os
 import psycopg2
 import bcrypt
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+
 def get_conn():
     return psycopg2.connect(
         host="localhost",
         database="hospital_security",
         user="postgres",
-        password=""
+        password=os.environ.get("DB_PASSWORD", "victor1710")
     )
+
 
 def registrar_log(id_usuario, operacao, tabela, ip):
     conn = get_conn()
@@ -24,6 +27,7 @@ def registrar_log(id_usuario, operacao, tabela, ip):
     )
     conn.commit()
     conn.close()
+
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -50,5 +54,6 @@ def login():
     registrar_log(None, "TENTATIVA_FALHA", "usuario_sistema", ip)
     return jsonify({"status": "falhou"}), 401
 
+
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(debug=False, port=5001)

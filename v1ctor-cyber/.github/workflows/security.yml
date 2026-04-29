@@ -1,0 +1,33 @@
+name: Security Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout do codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: |
+          pip install bandit safety
+
+      - name: Bandit - analise de vulnerabilidades no codigo
+        run: |
+          bandit -r app/ -f txt || true
+
+      - name: Safety - verificar dependencias com CVEs
+        run: |
+          pip install flask psycopg2-binary bcrypt
+          safety check || true

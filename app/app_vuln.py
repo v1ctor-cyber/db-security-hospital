@@ -1,5 +1,6 @@
 # app_vuln.py
 
+import os
 import psycopg2
 from flask import Flask, request, jsonify
 
@@ -11,7 +12,7 @@ def get_conn():
         host="localhost",
         database="hospital_security",
         user="postgres",
-        password=""
+        password=os.environ.get("DB_PASSWORD", "victor1710")
     )
 
 # VULNERÁVEL — SQL Injection via concatenação de string

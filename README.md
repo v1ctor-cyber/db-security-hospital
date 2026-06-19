@@ -1,64 +1,153 @@
-# db-security-hospital
+# 🏥 Hospital Security Monitoring Lab
 
-Projeto desenvolvido durante o curso de Engenharia de Software para demonstrar como segurança de dados pode e deve ser considerada desde a modelagem, não como uma camada adicionada no final.
+Laboratório prático de cibersegurança desenvolvido para simular monitoramento, auditoria e proteção de dados em um ambiente hospitalar.
 
-## Decisões de Segurança
+O projeto demonstra como decisões de segurança aplicadas desde a modelagem do banco de dados reduzem riscos de acesso indevido, vazamento de informações sensíveis e ataques de SQL Injection.
 
-- `LOG_ACESSO` existe desde o modelo conceitual porque auditoria não é opcional em sistemas de dados sensíveis. Com ela é possível monitorar acessos suspeitos, como um login fora do horário de expediente de um IP desconhecido, podendo evitar que virem incidentes de segurança.
+---
 
-- O campo se chama `senha_hash` porque não salva a senha como texto jamais no banco de dados, e sim apenas um hash, evitando que usuários tenham as senhas expostas pelo banco de dados.
+## 🎯 Objetivos
 
-- `PRONTUARIO` é uma tabela separada porque se estivesse dentro da tabela `paciente`, todos que tivessem acesso aos dados básicos do paciente também teriam acesso ao histórico médico completo.
+* Implementar controles de segurança em banco de dados
+* Registrar e auditar acessos a informações sensíveis
+* Detectar comportamentos suspeitos através de logs
+* Demonstrar vulnerabilidades e suas mitigações
+* Simular cenários utilizados por equipes SOC e Blue Team
 
-## Demonstração Prática
+---
 
-A pasta `app/` conecta a modelagem com a realidade — mostrando o que acontece quando as decisões de segurança são ignoradas ou aplicadas.
+## 🔐 Controles de Segurança Implementados
 
-**App vulnerável (`app_vuln.py`):**
-- Login via SQL injection sem conhecer nenhuma senha
-- Atacante obtém acesso de administrador com payload `' OR '1'='1'--`
-- Senhas comparadas em texto puro — qualquer vazamento expõe todos os usuários
+### Auditoria de Acessos
 
-**App seguro (`app_secure.py`):**
-- Queries parametrizadas bloqueiam 100% dos ataques testados
-- Senhas verificadas com bcrypt — hash nunca é revertido
-- Toda tentativa de login registrada automaticamente no `log_acesso` com IP e timestamp
-- Login legítimo continua funcionando normalmente
+A tabela `LOG_ACESSO` registra:
 
-**Resultado do `ataques.py`:**
+* Usuário autenticado
+* Endereço IP
+* Data e hora do acesso
+* Operação realizada
+* Recursos acessados
+
+Esses registros permitem identificar atividades anômalas e apoiar investigações de incidentes.
+
+### Proteção de Credenciais
+
+O sistema nunca armazena senhas em texto puro.
+
+* Hashing com bcrypt
+* Verificação segura de credenciais
+* Redução do impacto em caso de vazamento de dados
+
+### Segregação de Dados Sensíveis
+
+Informações médicas foram separadas em tabelas específicas para reduzir exposição desnecessária e aplicar o princípio do menor privilégio.
+
+---
+
+## ⚔️ Laboratório SQL Injection
+
+O projeto contém duas versões da aplicação:
+
+### Aplicação Vulnerável
+
+`app_vuln.py`
+
+Demonstra falhas comuns encontradas em sistemas reais:
+
+* SQL Injection
+* Comparação de senhas em texto puro
+* Escalada de privilégios
+
+Payload utilizado:
+
+```sql
+' OR '1'='1'--
 ```
-ATAQUE 1 (bypass)         → app vulnerável: 200 ok  | app seguro: 401 falhou
-ATAQUE 2 (usuário específico) → app vulnerável: 200 ok  | app seguro: 401 falhou  
-Login legítimo            → app vulnerável: 200 ok  | app seguro: 200 ok
+
+### Aplicação Segura
+
+`app_secure.py`
+
+Implementa:
+
+* Queries parametrizadas
+* Hash de senhas com bcrypt
+* Registro automático de auditoria
+* Validação segura de autenticação
+
+---
+
+## 🧪 Resultados dos Testes
+
+| Cenário         | Vulnerável | Seguro      |
+| --------------- | ---------- | ----------- |
+| Bypass de Login | ✅ Sucesso  | ❌ Bloqueado |
+| SQL Injection   | ✅ Sucesso  | ❌ Bloqueado |
+| Login Legítimo  | ✅ Sucesso  | ✅ Sucesso   |
+
+---
+
+## 📂 Estrutura
+
+```text
+documentos/
+aplicativo/
+├── app_vuln.py
+├── app_secure.py
+├── ataques.py
+
+esquema.sql
+consultas.sql
+esquema.dbml
+der.md
 ```
-## Estrutura do Repositório
 
-- `der.md` — Diagrama Entidade-Relacionamento
-- `esquema.dbml` — Modelagem lógica
-- `esquema.sql` — Schema SQL com decisões de segurança documentadas
-- `queries.sql` — Queries de consulta e auditoria
-- `documentos/` — Diagrama visual do schema
-- `app/app_vuln.py` — Aplicação vulnerável com SQL injection intencional
-- `app/app_secure.py` — Aplicação segura com queries parametrizadas e bcrypt
-- `app/ataques.py` — Scripts que demonstram os ataques e as mitigações
+---
 
-## Como Rodar
+## 🛠️ Tecnologias
 
-1. Instale o PostgreSQL e crie o banco: `CREATE DATABASE hospital_security;`
-2. Execute `esquema.sql` para criar as tabelas
-3. Execute `queries.sql` para testar as consultas de auditoria
-4. Instale as dependências: `pip install flask psycopg2-binary bcrypt requests`
-5. Em terminais separados, rode:
-   - `python app/app_vuln.py` — sobe o app vulnerável na porta 5000
-   - `python app/app_secure.py` — sobe o app seguro na porta 5001
-6. Execute `python app/ataques.py` para ver os ataques e as mitigações em ação
+* Python
+* Flask
+* PostgreSQL
+* psycopg2
+* bcrypt
+* GitHub Actions
+* Bandit
+* Safety
 
-## Tecnologias
+---
 
-- PostgreSQL 18
-- pgAdmin 4
-- dbdiagram.io
-- Python 3.14
-- Flask
-- psycopg2
-- bcrypt
+## 🚀 Como Executar
+
+1. Criar banco PostgreSQL
+2. Executar `esquema.sql`
+3. Executar `consultas.sql`
+4. Instalar dependências
+
+```bash
+pip install flask psycopg2-binary bcrypt requests
+```
+
+5. Iniciar aplicações
+
+```bash
+python app/app_vuln.py
+python app/app_secure.py
+```
+
+6. Executar ataques
+
+```bash
+python app/ataques.py
+```
+
+---
+
+## 👨‍💻 Autor
+
+Victor Silva
+
+Cybersecurity Analyst | SOC | Blue Team
+
+LinkedIn:
+https://linkedin.com/in/victor-cyber

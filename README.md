@@ -87,6 +87,30 @@ Implementa:
 
 ---
 
+## 📸 Evidências do Projeto
+
+### Auditoria de Logs
+
+![Auditoria](assets/auditoria-logs.jpg)
+
+### Mitigação de SQL Injection
+
+![SQL Injection](assets/sql-injection-mitigation.jpg)
+
+### Modelagem Hospitalar
+
+![Modelagem](assets/modelagem-hospitalar.jpg)
+
+### Estrutura dos Dados
+
+![Estrutura](assets/estrutura-dados.jpg)
+
+### Controle de Acesso
+
+![Controle](assets/controle-acesso-auditoria.jpg)
+
+---
+
 ## 📂 Estrutura
 
 ```text
@@ -147,7 +171,7 @@ python app/ataques.py
 
 Victor Silva
 
-Cybersecurity Analyst | SOC | Blue Team
+Estudante de Engenharia de Software com foco em Cibersegurança, SOC e Blue Team.
 
 LinkedIn:
 https://linkedin.com/in/victor-cyber
